@@ -1,1 +1,1 @@
-# AFitAccess — Documentation Technique
+# AFitAccess
