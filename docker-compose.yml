@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16
+    container_name: afitaccess-db
+    environment:
+      POSTGRES_DB: afitaccess
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database/afitaccess_postgresql.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+
+  redis:
+    image: redis:7
+    container_name: afitaccess-redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./backend
+    container_name: afitaccess-api
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/afitaccess
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: afitaccess-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+volumes:
+  db_data:
