@@ -1,87 +1,113 @@
-# AFitAccess — Guide de démarrage
+# AFitAccess - Guide de demarrage
 
-## Prérequis
+## Prerequis
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installé et lancé
-- [Git](https://git-scm.com/) installé
+- Docker Desktop installe et lance
+- Git installe
+- Optionnel pour lancer les services sans Docker :
+  - Python 3.11
+  - Node.js 20
 
----
+## Demarrage avec Docker
 
-## Démarrage du projet
-
-### 1. Cloner le dépôt
+### 1. Cloner le depot
 
 ```bash
 git clone https://github.com/mouhameddiop06/AFitAccess.git
 cd AFitAccess
 ```
 
-### 2. Lancer le projet
+### 2. Lancer tous les services
 
 ```bash
 docker compose up --build
 ```
 
-> La première fois, le build peut prendre quelques minutes le temps de télécharger les images et construire les conteneurs.
-
-Pour les lancements suivants (sans rebuild) :
+Pour les lancements suivants :
 
 ```bash
 docker compose up
 ```
 
----
-
-## Accès aux services
+## Acces aux services
 
 | Service | URL |
-|---|---|
-| Frontend | [http://localhost:5173](http://localhost:5173) |
-| API (Swagger UI) | [http://localhost:8000/docs](http://localhost:8000/docs) |
-| Base de données | `localhost:5432` (PostgreSQL) |
-| Cache | `localhost:6379` (Redis) |
+| --- | --- |
+| Frontend Vue/Vite | http://localhost:5173 |
+| API FastAPI | http://localhost:8000 |
+| Documentation Swagger | http://localhost:8000/docs |
+| PostgreSQL | localhost:5432 |
+| Redis | localhost:6379 |
 
----
+La base de donnees est initialisee au premier demarrage avec le fichier
+`database/afitaccess_postgresql.sql`.
 
-## Arrêter le projet
+## Demarrage local sans Docker
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv
+
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+
+# macOS/Linux
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### Frontend
+
+Dans un second terminal :
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Verification locale
+
+```bash
+# Backend
+cd backend
+ruff check .
+pytest
+
+# Frontend
+cd frontend
+npm run build
+```
+
+## Arreter le projet Docker
 
 ```bash
 docker compose down
 ```
 
-Pour tout supprimer (conteneurs + volumes de données) :
+Pour supprimer aussi les volumes de donnees :
 
 ```bash
 docker compose down -v
 ```
 
----
-
-## Structure des services
-
-```
-afitaccess-frontend   → React/Vite         (port 5173)
-afitaccess-api        → FastAPI/Python      (port 8000)
-afitaccess-db         → PostgreSQL 16       (port 5432)
-afitaccess-redis      → Redis 7             (port 6379)
-```
-
-La base de données est initialisée automatiquement au premier démarrage avec le fichier `database/afitaccess_postgresql.sql`.
-
----
-
 ## Commandes utiles
 
 ```bash
-# Voir les logs de tous les services
+# Logs de tous les services
 docker compose logs -f
 
-# Voir les logs d'un service spécifique
+# Logs d'un service specifique
 docker compose logs -f api
 
-# Reconstruire uniquement un service
+# Reconstruire uniquement l'API
 docker compose up --build api
 
-# Voir les conteneurs en cours d'exécution
+# Voir les conteneurs actifs
 docker ps
-``
+```

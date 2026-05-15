@@ -1933,7 +1933,7 @@ VALUES (
 -- 10. COMMENTAIRES GÉNÉRAUX
 -- =============================================================================
 
-COMMENT ON DATABASE CURRENT_DATABASE()
+COMMENT ON DATABASE afitaccess
     IS 'Base de données AFitAccess — SaaS de gestion de salles de sport';
 
 -- =============================================================================
